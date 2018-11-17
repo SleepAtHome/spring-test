@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+">
 
     <bean id="knight" class="com.szcoders.springtest.pojo.knights.BraveKnight" >
         <!-- 通过构造方法注入Quest bean -->
@@ -12,4 +18,21 @@
         <!-- 创建SlayDragonQuest -->
         <constructor-arg value="#{T(System).out}"></constructor-arg>
     </bean>
+
+    <!--声明Minstrel bean-->
+    <bean id="minstrel" class="com.szcoders.springtest.pojo.knights.Minstrel">
+        <constructor-arg value="#{T(System).out}"></constructor-arg>
+    </bean>
+
+    <aop:config>
+        <aop:aspect ref="minstrel">
+            <!--定义切点 表达式用了AspectJ切点表达式语言-->
+            <aop:pointcut id="embark" expression="execution(* *.embarkOnQuest(..))"></aop:pointcut>
+            <!--前置通知-->
+            <aop:before pointcut-ref="embark" method="singBeforeQuest"></aop:before>
+            <!--后置通知-->
+            <aop:after pointcut-ref="embark" method="singAfterQuest"></aop:after>
+        </aop:aspect>
+    </aop:config>
+
 </beans>
